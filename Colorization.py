@@ -106,7 +106,7 @@ def decoder(d, parameters):
 	return A
 
 
-G = tf.placeholder(float32, shape = [None, 28, 28, 512], name= 'Grey level features')
+G = tf.placeholder('float32', shape = [None, 28, 28, 512], name= 'Grey level features')
 
 def MDN(G, d, keep_prob, parameters):
 	Z = tf.nn.conv2d(G, parameters['W10'], [1, 1, 1, 1], padding = 'SAME')  # kernel = 5*5, stride = 1, o/p channels = 384
