@@ -1,6 +1,5 @@
 import tensorflow as tf
 from load_data import mini_batches
-from parameters import save_parameters
 import time
 
 def encoder(X, d, keep_prob, parameters):
@@ -61,12 +60,13 @@ def decoder(d, parameters):
 
 	return A
 
-def train_vae(X_train, parameters, d, num_epochs = 100, learning_rate = 0.009, keep_prob = 1.0, minibatch_size = 16):
+def train_vae(X_train, parameters, d, num_epochs = 1, learning_rate = 0.009, keep_prob = 1.0, minibatch_size = 16):
 	X = tf.placeholder(tf.float32, [minibatch_size] + list(X_train.shape[1:]))
 	Z = decoder(encoder(X, d, keep_prob, parameters), parameters)
 	cost = compute_cost(X, Z)
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(cost)
 	init = tf.global_variables_initializer()
+	saver = tf.train.Saver()
 	with  tf.Session() as sess:
 		sess.run(init)
 		for epoch in range(num_epochs):
@@ -77,12 +77,12 @@ def train_vae(X_train, parameters, d, num_epochs = 100, learning_rate = 0.009, k
 				mb_st = time.time()
 				_ , temp_cost = sess.run([optimizer, cost], feed_dict={X:minibatch})
 				mb_time = time.time() - mb_st
-				print("epoch no = " + str(epoch) + ", minibatch = " + str(i) + "/" + str(len(minibatches)) + ", loss = " + str(temp_cost) + " in " + str(mb_time))
-				i += 1
+				print("epoch no = " + str(epoch) + ", minibatch = " + str(i) + "/" + str(len(minibatches)) + ", loss = " + str(temp_cost) + " in " + str(mb_time) + "secs")
+				i += 1	
 			ep_time = time.time() - ep_st
-			print("epoch " + str(epoch) + "completed in " + str(ep_time))
-			save_parameters(parameters, True)
-			print("parameters saved")
+			print("epoch " + str(epoch) + "completed in " + str(ep_time) + "secs")
+			save_path = saver.save(sess, "/tmp/model.ckpt")
+			print("Model saved in path: " + str(save_path))
     # train_accuracy = accuracy.eval({X: X_train, Y: X_train})
     # print("Train Accuracy:", train_accuracy)
     # return train_accuracy, parameters

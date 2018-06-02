@@ -13,8 +13,8 @@ def mini_batches(X, mini_batch_size=16, shuffle=False):
     for k in range(0, num_complete_minibatches):
         mini_batches.append(X[k * mini_batch_size:(k + 1) * mini_batch_size])
 
-    if m % mini_batch_size != 0:
-        mini_batches.append(X[num_complete_minibatches*mini_batch_size:])
+    # if m % mini_batch_size != 0:
+    #     mini_batches.append(X[num_complete_minibatches*mini_batch_size:])
         
     return mini_batches
 
