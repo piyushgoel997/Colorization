@@ -1,6 +1,7 @@
 import tensorflow as tf
 from load_data import mini_batches
-from Colorization import save_parameters
+from parameters import save_parameters
+import time
 
 def encoder(X, d, keep_prob, parameters):
 	Z = tf.nn.conv2d(X, parameters['W1'], [1, 2, 2, 1], padding = 'SAME') + parameters['b1'] #kernel = 5*5, strides = 2, o/p channels = 128
@@ -69,11 +70,19 @@ def train_vae(X_train, parameters, d, num_epochs = 100, learning_rate = 0.009, k
 	with  tf.Session() as sess:
 		sess.run(init)
 		for epoch in range(num_epochs):
+			ep_st = time.time()
 			minibatches = mini_batches(X_train, minibatch_size, shuffle=True)
+			i = 1
 			for minibatch in minibatches:
+				mb_st = time.time()
 				_ , temp_cost = sess.run([optimizer, cost], feed_dict={X:minibatch})
-				print(temp_cost)
+				mb_time = time.time() - mb_st
+				print("epoch no = " + str(epoch) + ", minibatch = " + str(i) + "/" + str(len(minibatches)) + ", loss = " + str(temp_cost) + " in " + str(mb_time))
+				i += 1
+			ep_time = time.time() - ep_st
+			print("epoch " + str(epoch) + "completed in " + str(ep_time))
 			save_parameters(parameters, True)
+			print("parameters saved")
     # train_accuracy = accuracy.eval({X: X_train, Y: X_train})
     # print("Train Accuracy:", train_accuracy)
     # return train_accuracy, parameters
