@@ -24,7 +24,7 @@ def load_images(root_path, image_shape = (64, 64, 3)):
     for root, _, files in os.walk(root_path):
         for f in files:
             paths.append(str(root)+"/"+str(f))
-            
+
     X = np.zeros((len(paths), *image_shape), dtype='float32')
     G = np.zeros((len(paths), *image_shape[:2]), dtype='float32')
     i = 0
